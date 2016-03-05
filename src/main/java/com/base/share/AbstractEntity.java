@@ -1,41 +1,49 @@
 package com.base.share;
 
 import lombok.Getter;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @MappedSuperclass
-public class AbstractEntity {
+@EntityListeners(AuditingEntityListener.class)
+@SuppressWarnings({ "PMD.UnusedPrivateField", "findbugs:EQ_DOESNT_OVERRIDE_EQUALS" })
+public class AbstractEntity implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	protected Long id; // NOSONAR
 
-	public Long getId() {
-		return id;
+	public boolean isNew() {
+		return id == null;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 
+		if (null == obj) {
+			return false;
+		}
+
 		if (this == obj) {
 			return true;
 		}
 
-		if (this.id == null || obj == null || !(this.getClass().equals(obj.getClass()))) {
+		if (!getClass().equals(obj.getClass())) {
 			return false;
 		}
 
-		AbstractEntity that = (AbstractEntity) obj;
+		Persistable that = (Persistable) obj;
 
-		return this.id.equals(that.getId());
+		return null == this.getId() ? false : this.getId().equals(that.getId());
 	}
 
 	@Override
 	public int hashCode() {
-		return id == null ? 0 : id.hashCode();
+		int hashCode = 17;
+		hashCode += null == getId() ? 0 : getId().hashCode() * 31;
+		return hashCode;
 	}
 }

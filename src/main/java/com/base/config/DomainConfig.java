@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -21,10 +22,11 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = {BaseDomain.class})
+@EnableJpaAuditing
+@EnableJpaRepositories(basePackageClasses = { BaseDomain.class })
 @EnableTransactionManagement
 @PropertySource("classpath:dataSource/develop.xml")
-@ComponentScan(basePackageClasses = {BaseDomain.class})
+@ComponentScan(basePackageClasses = { BaseDomain.class })
 public class DomainConfig {
 	@Autowired
 	private Environment environment;
@@ -55,10 +57,24 @@ public class DomainConfig {
 	}
 
 	private Properties hibernateProperties(Environment environment) {
-		Properties properties = new Properties();
-		properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
-		properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-		return properties;
+		Properties jpaProperties = new Properties();
+		jpaProperties.put("hibernate.dialect",
+			environment.getRequiredProperty("hibernate.dialect"));
+		jpaProperties.put("hibernate.show_sql",
+			environment.getRequiredProperty("hibernate.show_sql"));
+		jpaProperties.put("hibernate.format_sql",
+			environment.getRequiredProperty("hibernate.format_sql"));
+		jpaProperties.put("hibernate.hbm2ddl.auto",
+			environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
+		jpaProperties.put("hibernate.ejb.naming_strategy",
+			environment.getRequiredProperty("hibernate.ejb.naming_strategy"));
+
+		jpaProperties.put("jadira.usertype.autoRegisterUserTypes",
+			environment.getRequiredProperty("jadira.usertype.autoRegisterUserTypes"));
+		jpaProperties.put("jadira.usertype.databaseZone",
+			environment.getRequiredProperty("jadira.usertype.databaseZone"));
+
+		return jpaProperties;
 	}
 
 	@Bean

@@ -10,4 +10,11 @@
     <!-- hibernate parameter -->
     <entry key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</entry>
     <entry key="hibernate.show_sql">true</entry>
+    <entry key="hibernate.format_sql">true</entry>
+    <entry key="hibernate.hbm2ddl.auto">validate</entry>
+    <entry key="hibernate.ejb.naming_strategy">org.hibernate.cfg.DefaultNamingStrategy</entry>
+
+    <!-- AuditingEntityListener parameter -->
+    <entry key="jadira.usertype.autoRegisterUserTypes">true</entry>
+    <entry key="jadira.usertype.databaseZone">jvm</entry>
 </properties>
